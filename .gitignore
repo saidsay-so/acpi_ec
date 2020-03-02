@@ -1,0 +1,12 @@
+# These rules are taken from the Linux original source code
+.*
+*.ko
+*.mod
+*.mod.c
+*.o
+*.o.*
+*.tar
+*.xz
+Module.symvers
+modules.order
+!.gitignore
