@@ -47,7 +47,7 @@ if ! (dkms status 2>/dev/null | grep -q "$MODULE_NAME.*installed"); then # If th
     else
       generate_keys
     fi
-    echo "POST_BUILD=\"../../../../../../$SIGN_DIR/sign-modules.sh ../\$kernelver/\$arch/module/*.ko*\"" >>new_dkms.conf
+    echo "POST_BUILD=\"../../../../../../../$SIGN_DIR/sign-modules.sh ../\$kernelver/\$arch/module/*.ko*\"" >>new_dkms.conf
     mkdir -p $SIGN_DIR
     cp -t $SIGN_DIR scripts/sign-modules.sh
 
