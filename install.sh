@@ -7,9 +7,9 @@ if [[ "$EUID" != 0 ]]; then
 fi
 
 MODULE_NAME=acpi_ec
-VERSION=1.0.0
+VERSION=$(cat VERSION)
 SIGN_DIR=/root/module-signing/
-MOD_SRC_DIR="/usr/src/$MODULE_NAME-$VERSION"
+MOD_SRC_DIR="/usr/src/$MODULE_NAME-${VERSION}"
 
 generate_keys() {
   cp -t $SIGN_DIR scripts/keys-setup.sh
@@ -26,12 +26,13 @@ cleanup() {
 }
 trap cleanup EXIT
 
-if ! (dkms status 2>/dev/null | grep -q "$MODULE_NAME.*installed"); then # If the module is already installed in DKMS
+if ! (dkms status 2>/dev/null | grep -q "$MODULE_NAME/${VERSION}.*installed"); then # If the module is already installed in DKMS
   cp dkms.conf new_dkms.conf
+  sed -i "s/\$VERSION/${VERSION}/g" new_dkms.conf
 
-  if [[ $(mokutil --sb-state) == *"enabled"* ]]; then                                              # If Secure boot is enabled
-    if [[ -n "$(mokutil --list-enrolled)" ]]; then                                                 # If any keys are enrolled
-      if [[ $(mokutil --test-key "$SIGN_DIR/MOK.der" 2>/dev/null) != *"already enrolled"* ]]; then # If our keys are not already generated/enrolled by the MOK
+  if [[ $(mokutil --sb-state 2>/dev/null) == *"enabled"* ]]; then                                              # If Secure boot is enabled
+    if [[ -n "$(mokutil --list-enrolled 2>/dev/null)" ]]; then                                                 # If any keys are enrolled
+      if [[ $(mokutil --test-key "$SIGN_DIR/MOK.der" 2>/dev/null) != *"already enrolled"* ]]; then             # If our keys are not already generated/enrolled by the MOK
         read -rp "Do you want to select your own enrolled keys? (y/N) " RES
         case $RES in
         [yY]*)
@@ -62,10 +63,10 @@ if ! (dkms status 2>/dev/null | grep -q "$MODULE_NAME.*installed"); then # If th
   fi
 
   mv new_dkms.conf "$MOD_SRC_DIR/dkms.conf"
-  dkms add -m $MODULE_NAME -v "$VERSION"
-  dkms install -m $MODULE_NAME -v "$VERSION"
+  dkms add -m $MODULE_NAME -v "${VERSION}"
+  dkms install -m $MODULE_NAME -v "${VERSION}"
 
 else
-  echo "$MODULE_NAME is already installed"
+  echo "$MODULE_NAME v${VERSION} is already installed"
   exit 1
 fi

@@ -11,7 +11,8 @@ SIGN_DIR=/root/module-signing/
 
 modprobe -r $MODULE_NAME
 
-VERSIONS=($(dkms status 2>/dev/null | sed -E -n "s/$MODULE_NAME, ([0-9]+.[0-9]+.[0-9]+).*/\1/ p" | sort -u))
+mapfile -t VERSIONS < <(dkms status 2>/dev/null | sed -E -n "s/$MODULE_NAME, ([0-9]+.[0-9]+.[0-9]+).*/\1/ p" | sort -u)
+
 for version in "${VERSIONS[@]}"; do
     dkms remove -m $MODULE_NAME -v "$version" --all
     rm -rf "/usr/src/$MODULE_NAME-$version/"

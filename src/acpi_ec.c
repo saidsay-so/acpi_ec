@@ -110,6 +110,7 @@ static const struct file_operations acpi_ec_ops = {
     .open = simple_open,
     .read = acpi_ec_read,
     .write = acpi_ec_write,
+    .llseek = default_llseek,
 };
 
 static int acpi_ec_create_dev(void)
