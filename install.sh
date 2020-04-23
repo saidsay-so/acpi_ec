@@ -66,6 +66,10 @@ if ! (dkms status 2>/dev/null | grep -q "$MODULE_NAME/${VERSION}.*installed"); t
   dkms add -m $MODULE_NAME -v "${VERSION}"
   dkms install -m $MODULE_NAME -v "${VERSION}"
 
+  # module auto-loading
+  echo "# Load the acpi_ec module" >> /etc/modules-load.d/modules.conf
+  echo "acpi_ec" >> /etc/modules-load.d/modules.conf
+
 else
   echo "$MODULE_NAME v${VERSION} is already installed"
   exit 1
