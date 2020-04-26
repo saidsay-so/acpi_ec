@@ -10,7 +10,7 @@
 
 int main()
 {
-    int fd = open("/dev/ec", O_RDWR | O_EXCL);
+    int fd = open("/dev/ec", O_RDWR);
     int err;
 
     if (fd < 0)

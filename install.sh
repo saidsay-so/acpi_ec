@@ -12,6 +12,7 @@ SIGN_DIR=/root/module-signing/
 MOD_SRC_DIR="/usr/src/$MODULE_NAME-${VERSION}"
 
 generate_keys() {
+  mkdir -p $SIGN_DIR
   cp -t $SIGN_DIR scripts/keys-setup.sh
   $SIGN_DIR/keys-setup.sh
 }
@@ -30,7 +31,10 @@ if ! (dkms status 2>/dev/null | grep -q "$MODULE_NAME/${VERSION}.*installed"); t
   cp dkms.conf new_dkms.conf
   sed -i "s/\$VERSION/${VERSION}/g" new_dkms.conf
 
-  if [[ $(mokutil --sb-state 2>/dev/null) == *"enabled"* ]]; then                                              # If Secure boot is enabled
+  if command -v update-secureboot-policy 2>&1; then
+    update-secureboot-policy --new-key
+    update-secureboot-policy --enroll-key
+  elif [[ $(mokutil --sb-state 2>/dev/null) == *"enabled"* ]]; then                                              # If Secure boot is enabled
     if [[ -n "$(mokutil --list-enrolled 2>/dev/null)" ]]; then                                                 # If any keys are enrolled
       if [[ $(mokutil --test-key "$SIGN_DIR/MOK.der" 2>/dev/null) != *"already enrolled"* ]]; then             # If our keys are not already generated/enrolled by the MOK
         read -rp "Do you want to select your own enrolled keys? (y/N) " RES
@@ -48,8 +52,7 @@ if ! (dkms status 2>/dev/null | grep -q "$MODULE_NAME/${VERSION}.*installed"); t
     else
       generate_keys
     fi
-    echo "POST_BUILD=\"../../../../../../../$SIGN_DIR/sign-modules.sh ../\$kernelver/\$arch/module/*.ko*\"" >>new_dkms.conf
-    mkdir -p $SIGN_DIR
+    echo "POST_BUILD=\"../../../../../../$SIGN_DIR/sign-modules.sh ../\$kernelver/\$arch/module/*.ko*\"" >> new_dkms.conf
     cp -t $SIGN_DIR scripts/sign-modules.sh
 
     if [[ -n $PUB_KEY ]] && [[ -n $PRIV_KEY ]]; then
