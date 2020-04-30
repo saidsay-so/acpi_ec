@@ -9,6 +9,7 @@
  *      Thomas Renninger <trenn@suse.de>
  */
 
+//TODO: Add support for more than one EC controller.
 #include <linux/kernel.h>
 #include <linux/acpi.h>
 #include <linux/module.h>

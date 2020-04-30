@@ -3,6 +3,13 @@
 
 DIR=$(dirname "$0")
 
+cleanup() {
+   mokutil --revoke-import
+   rm -rf "$DIR"
+   exit 1
+}
+trap cleanup SIGINT
+
 echo
 echo "Generating a new key for MOK..."
 read -rp "Do you want to set a passphrase with the key ? (Y/n) " RES
@@ -17,7 +24,7 @@ case $RES in
    ;;
 
 *)
-   echo "This passphrase will be required every time you want to sign a module."
+   echo "This passphrase will be required everytime you want to sign a module."
    read -rp "Please press RETURN to go on."
    openssl req -new -x509 -newkey rsa:4096 -keyout "$DIR"/MOK.priv -outform DER -out "$DIR"/MOK.der -days 36500 -subj "/CN=$(hostname) module signing key/" || exit 1
    ;;

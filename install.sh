@@ -8,7 +8,7 @@ fi
 
 MODULE_NAME=acpi_ec
 VERSION=$(cat VERSION)
-SIGN_DIR=/root/module-signing/
+SIGN_DIR=/root/module-signing
 MOD_SRC_DIR="/usr/src/$MODULE_NAME-${VERSION}"
 
 generate_keys() {
@@ -27,11 +27,21 @@ cleanup() {
 }
 trap cleanup EXIT
 
+if ! [[ -d "/usr/src/kernels/$(uname -r)" ]]; then
+  echo "Couldn't find kernel source for the current kernel!"
+  exit 1
+fi
+
+if ! command -v dkms >/dev/null 2>&1; then
+  echo "DKMS should be installed!"
+  exit 1
+fi
+
 if ! (dkms status 2>/dev/null | grep -q "$MODULE_NAME/${VERSION}.*installed"); then # If the module is already installed in DKMS
   cp dkms.conf new_dkms.conf
   sed -i "s/\$VERSION/${VERSION}/g" new_dkms.conf
 
-  if command -v update-secureboot-policy 2>&1; then
+  if command -v update-secureboot-policy >/dev/null 2>&1; then
     update-secureboot-policy --new-key
     update-secureboot-policy --enroll-key
   elif [[ $(mokutil --sb-state 2>/dev/null) == *"enabled"* ]]; then                                              # If Secure boot is enabled
@@ -66,11 +76,10 @@ if ! (dkms status 2>/dev/null | grep -q "$MODULE_NAME/${VERSION}.*installed"); t
   fi
 
   mv new_dkms.conf "$MOD_SRC_DIR/dkms.conf"
-  dkms add -m $MODULE_NAME -v "${VERSION}"
-  dkms install -m $MODULE_NAME -v "${VERSION}"
+  dkms add --force -m $MODULE_NAME -v "${VERSION}"
+  dkms install --force -m $MODULE_NAME -v "${VERSION}"
 
   # module auto-loading
-  echo "# Load the acpi_ec module" >> /etc/modules-load.d/modules.conf
   echo "acpi_ec" >> /etc/modules-load.d/modules.conf
 
 else

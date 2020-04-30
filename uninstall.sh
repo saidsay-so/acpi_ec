@@ -7,7 +7,7 @@ if [[ "$EUID" != 0 ]]; then
 fi
 
 MODULE_NAME=acpi_ec
-SIGN_DIR=/root/module-signing/
+SIGN_DIR=/root/module-signing
 
 modprobe -r $MODULE_NAME
 
