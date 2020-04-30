@@ -12,8 +12,7 @@ SIGN_DIR=/root/module-signing
 MOD_SRC_DIR="/usr/src/$MODULE_NAME-${VERSION}"
 
 generate_keys() {
-  mkdir -p $SIGN_DIR
-  cp -t $SIGN_DIR scripts/keys-setup.sh
+  install -Dm744 -t $SIGN_DIR scripts/keys-setup.sh
   $SIGN_DIR/keys-setup.sh
 }
 
@@ -63,7 +62,7 @@ if ! (dkms status 2>/dev/null | grep -q "$MODULE_NAME/${VERSION}.*installed"); t
       generate_keys
     fi
     echo "POST_BUILD=\"../../../../../../$SIGN_DIR/sign-modules.sh ../\$kernelver/\$arch/module/*.ko*\"" >> new_dkms.conf
-    cp -t $SIGN_DIR scripts/sign-modules.sh
+    install -Dm744 -t $SIGN_DIR scripts/sign-modules.sh
 
     if [[ -n $PUB_KEY ]] && [[ -n $PRIV_KEY ]]; then
       sed -i -e "s/PUB_KEY=.*/PUB_KEY=$PUB_KEY/" -e "s/PRIV_KEY=.*/PRIV_KEY=$PRIV_KEY/" "$SIGN_DIR/sign-modules.sh"
