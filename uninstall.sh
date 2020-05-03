@@ -18,7 +18,7 @@ mapfile -t VERSIONS < <(dkms status 2>/dev/null | sed -E -n "s/$MODULE_NAME, ([0
 
 for version in "${VERSIONS[@]}"; do
     dkms remove -m $MODULE_NAME -v "$version" --all
-    dkms uninstall -m $MODULE_NAME -v "$version" --all
+    dkms uninstall -m $MODULE_NAME -v "$version"
     rm -rf "/usr/src/$MODULE_NAME-$version/"
 done
 

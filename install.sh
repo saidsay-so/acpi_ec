@@ -10,9 +10,10 @@ MODULE_NAME=acpi_ec
 VERSION=$(cat VERSION)
 SIGN_DIR=/root/module-signing
 MOD_SRC_DIR="/usr/src/$MODULE_NAME-${VERSION}"
+TEMP=$(mktemp -d)
 
 generate_keys() {
-  install -Dm744 -t $SIGN_DIR scripts/keys-setup.sh
+  install -Dm700 -t $SIGN_DIR scripts/keys-setup.sh
   $SIGN_DIR/keys-setup.sh
 }
 
@@ -22,14 +23,9 @@ ask_paths() {
 }
 
 cleanup() {
-  rm -f new_dkms.conf
+  rm -rf "$TEMP"
 }
 trap cleanup EXIT
-
-if ! [[ -d "/usr/src/kernels/$(uname -r)" ]]; then
-  echo "Couldn't find kernel source for the current kernel!"
-  exit 1
-fi
 
 if ! command -v dkms >/dev/null 2>&1; then
   echo "DKMS should be installed!"
@@ -37,9 +33,10 @@ if ! command -v dkms >/dev/null 2>&1; then
 fi
 
 if ! (dkms status 2>/dev/null | grep -q "$MODULE_NAME/${VERSION}.*installed"); then # If the module is already installed in DKMS
-  cp dkms.conf new_dkms.conf
-  sed -i "s/\$VERSION/${VERSION}/g" new_dkms.conf
+  cp dkms.conf "$TEMP/dkms.conf"
+  sed -i "s/\$VERSION/${VERSION}/g" "$TEMP/dkms.conf"
 
+  # For Debian
   if command -v update-secureboot-policy >/dev/null 2>&1; then
     update-secureboot-policy --new-key
     update-secureboot-policy --enroll-key
@@ -61,8 +58,8 @@ if ! (dkms status 2>/dev/null | grep -q "$MODULE_NAME/${VERSION}.*installed"); t
     else
       generate_keys
     fi
-    echo "POST_BUILD=\"../../../../../../$SIGN_DIR/sign-modules.sh ../\$kernelver/\$arch/module/*.ko*\"" >> new_dkms.conf
-    install -Dm744 -t $SIGN_DIR scripts/sign-modules.sh
+    echo "POST_BUILD=\"../../../../../../$SIGN_DIR/sign-modules.sh ../\$kernelver/\$arch/module/*.ko*\"" >> "$TEMP/dkms.conf"
+    install -Dm700 -t $SIGN_DIR scripts/sign-modules.sh
 
     if [[ -n $PUB_KEY ]] && [[ -n $PRIV_KEY ]]; then
       sed -i -e "s/PUB_KEY=.*/PUB_KEY=$PUB_KEY/" -e "s/PRIV_KEY=.*/PRIV_KEY=$PRIV_KEY/" "$SIGN_DIR/sign-modules.sh"
@@ -74,9 +71,10 @@ if ! (dkms status 2>/dev/null | grep -q "$MODULE_NAME/${VERSION}.*installed"); t
     cp -R "$PWD/src/" "$MOD_SRC_DIR/src"
   fi
 
-  mv new_dkms.conf "$MOD_SRC_DIR/dkms.conf"
-  dkms add --force -m $MODULE_NAME -v "${VERSION}"
-  dkms install --force -m $MODULE_NAME -v "${VERSION}"
+  mv "$TEMP/dkms.conf" "$MOD_SRC_DIR/dkms.conf"
+  dkms add --force -m "$MODULE_NAME" -v "${VERSION}"
+  dkms build --force -m "$MODULE_NAME" -v "${VERSION}"
+  dkms install --force -m "$MODULE_NAME" -v "${VERSION}"
 
   # module auto-loading
   echo "acpi_ec" >> /etc/modules-load.d/modules.conf
