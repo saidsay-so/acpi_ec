@@ -18,8 +18,8 @@ generate_keys() {
 }
 
 ask_paths() {
-  (read -rp "Enter the path of the public key: " PUB_KEY && [[ -f "$PUB_KEY" ]]) || return 1
-  (read -rp "Enter the path of the private key: " PRIV_KEY && [[ -f "$PRIV_KEY" ]]) || return 1
+  (read -erp "Enter the path of the public key: " PUB_KEY && [[ -f "$PUB_KEY" ]]) || return 1
+  (read -erp "Enter the path of the private key: " PRIV_KEY && [[ -f "$PRIV_KEY" ]]) || return 1
 }
 
 cleanup() {
