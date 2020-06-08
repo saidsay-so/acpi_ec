@@ -8,11 +8,11 @@ It comes with a DKMS config to automatically rebuild it with signing support and
 You should ensure that you have `dkms` and `mokutil` installed on your computer (`mokutil` is generally included if you have a distro which supports Secure Boot). You also need to install the kernel sources (`linux-headers` on Debian/Ubuntu or `kernel-devel` on RPM distros). 
 
 ```sh
-sudo apt install dkms build-essential linux-headers-$(uname -r)
+sudo apt install dkms build-essential linux-headers-$(uname -r) 
 ```
 or
 ```sh
-sudo dnf install kernel-devel dkms
+sudo dnf install kernel-devel dkms make
 ```
 
 Then just launch: 
