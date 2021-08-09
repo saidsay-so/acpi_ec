@@ -5,17 +5,24 @@
 It comes with a DKMS config to automatically rebuild it with signing support and an install script which can be easily modified for another module. The script can generate new keys and enroll them for Secure Boot.
 
 # Installation
-You should ensure that you have `dkms` and `mokutil` installed on your computer (`mokutil` is generally included if you have a distro which supports Secure Boot). You also need to install the kernel sources (`linux-headers` on Debian/Ubuntu or `kernel-devel` on RPM distros). 
+
+## Debian
+
+You can find `.deb` in the [releases](https://github.com/MusiKid/acpi_ec/releases/latest).
+
+## Other distributions
+
+You should ensure that you have `dkms` and `mokutil` installed on your computer (`mokutil` is generally included if you have a distro which supports Secure Boot). You also need to install the kernel sources (`linux-headers` on Debian/Ubuntu or `kernel-devel` on RPM distros).
 
 ```sh
-sudo apt install dkms build-essential linux-headers-$(uname -r) 
+sudo apt install dkms build-essential linux-headers-$(uname -r)
 ```
 or
 ```sh
 sudo dnf install kernel-devel dkms make
 ```
 
-Then just launch: 
+Then just launch:
 ```sh
 sudo ./install.sh
 ```
