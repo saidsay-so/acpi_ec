@@ -1,0 +1,16 @@
+Source: acpi-ec
+Maintainer: musikid <musikid@outlook.com>
+Section: misc
+Priority: optional
+Build-Depends: debhelper (>= 9), dkms
+Standards-Version: 3.9.1
+Vcs-Browser: https://github.com/MusiKid/acpi_ec
+Vcs-Git: https://github.com/MusiKid/acpi_ec.git
+
+Package: acpi-ec
+Architecture: all
+Depends: ${misc:Depends}
+Section: misc
+Priority: optional
+Description: DKMS package for acpi_ec module
+	DKMS package for acpi_ec kernel module.

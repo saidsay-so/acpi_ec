@@ -1,0 +1,5 @@
+Format: https://debian.org/doc/packaging-manuals/copyright-format/1.0/
+
+Files: *
+Copyright: Copyright 2020 musikid <musikid@outlook.com>
+License: GPL3-+
