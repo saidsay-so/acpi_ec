@@ -1,0 +1,37 @@
+on:
+  push:
+    tags:
+      - "v[0-9]+.[0-9]+.[0-9]+"
+
+jobs:
+  create_release:
+    runs-on: ubuntu-latest
+    name: Create release
+    steps:
+      - uses: actions/checkout@v2
+
+      - uses: softprops/action-gh-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  make-deb:
+    runs-on: ubuntu-latest
+    name: Build Debian package
+    needs: create_release
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Install required packages
+        run: |
+          sudo apt-get update && sudo apt-get install -y debhelper devscripts equivs --no-install-recommends
+          sudo mk-build-deps --install --build-dep -t "apt-get -o Debug::pkgProblemResolver=yes -y --no-install-recommends" debian/control
+
+      - name: Build the package
+        run: debuild -us -uc
+
+      - name: Upload Debian package
+        uses: softprops/action-gh-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          files: "../*.deb"

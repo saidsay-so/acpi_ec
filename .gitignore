@@ -1,5 +1,6 @@
 # These rules are taken from the Linux original source code
 .*
+!.github
 *.ko
 *.mod
 *.mod.c
