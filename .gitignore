@@ -13,15 +13,15 @@ modules.order
 !.gitignore
 
 # Debian packaging
-/*.deb
-/*.dsc
-/*.changes
-/*.buildinfo
-!/*/debian
-/*/debian/files
-/*/debian/*.substvars
-/*/debian/*.log
-/*/debian/*.debhelper
-/*/debian/*-stamp
-/*/debian/*/
-/build
+*.deb
+*.dsc
+*.changes
+*.buildinfo
+!debian
+debian/files
+debian/*.substvars
+debian/*.log
+debian/*.debhelper
+debian/*-stamp
+debian/*/
+build
