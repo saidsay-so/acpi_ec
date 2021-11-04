@@ -1,14 +1,15 @@
 #!/bin/bash
 # This script was partly inspired by https://github.com/atar-axis/xpadneo/blob/master/install.sh
 
+source _variables.sh
+
+set -e
+
 if [[ "$EUID" != 0 ]]; then
   echo "The script need to be run as root."
   exit 1
 fi
 
-MODULE_NAME=acpi_ec
-VERSION=$(git describe --tags --abbrev=0)
-MOD_SRC_DIR="/usr/src/$MODULE_NAME-${VERSION}"
 TEMP=$(mktemp -d)
 
 generate_keys() {
@@ -31,6 +32,9 @@ if ! command -v dkms >/dev/null 2>&1; then
   echo "DKMS should be installed!"
   exit 1
 fi
+
+VERSION=$(git describe --tags --abbrev=0)
+MOD_SRC_DIR="/usr/src/$MODULE_NAME-$VERSION"
 
 if ! (dkms status 2>/dev/null | grep -q "$MODULE_NAME/${VERSION}.*installed"); then # if the module is already installed in DKMS
 

@@ -1,13 +1,12 @@
 #!/bin/bash
 # This script was partly inspired by https://github.com/atar-axis/xpadneo/blob/master/uninstall.sh
 
+source _variables.sh
+
 if [[ "$EUID" != 0 ]]; then
     echo "The script need to be run as root."
     exit 1
 fi
-
-MODULE_NAME=acpi_ec
-SIGN_DIR=/root/module-signing
 
 modprobe -rq $MODULE_NAME
 
