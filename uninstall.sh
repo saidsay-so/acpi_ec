@@ -27,15 +27,32 @@ for version in "${VERSIONS[@]}"; do
     echo "Uninstalled $MODULE_NAME $version"
 done
 
-if [[ -f "$SIGN_DIR/MOK.der" ]]; then
+if [[ -f "$SIGN_DIR/mok.der" ]]; then
     echo -n "Do you want to remove the generated key? (y/N) "
     read -r RES
     echo
 
     case $RES in
     [yY]*)
-        mokutil --delete "$SIGN_DIR/MOK.der" 2>/dev/null
+        mokutil --delete "$SIGN_DIR/mok.der" 2>/dev/null
         rm -rf "$SIGN_DIR"
+        echo "Successfully deleted and revoked the key."
+        ;;
+
+    *) ;;
+    esac
+fi
+
+# Fix wrong folder issue
+if [[ -f /root/mok.der ]]; then
+    echo -n "Do you want to remove the generated key? (y/N) "
+    read -r RES
+    echo
+
+    case $RES in
+    [yY]*)
+        mokutil --delete "/root/mok.der" 2>/dev/null
+        rm -f /root/mok.der /root/mok.priv /root/keys-setup.sh
         echo "Successfully deleted and revoked the key."
         ;;
 

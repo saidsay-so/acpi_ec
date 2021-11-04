@@ -13,8 +13,8 @@ fi
 TEMP=$(mktemp -d)
 
 generate_keys() {
-  install -Dm700 -t /root scripts/keys-setup.sh
-  /root/keys-setup.sh
+  install -Dm700 -t "$SIGN_DIR" scripts/keys-setup.sh
+  $SIGN_DIR/keys-setup.sh
 }
 
 ask_paths() {
