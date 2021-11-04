@@ -43,7 +43,7 @@ if ! (dkms status 2>/dev/null | grep -q "$MODULE_NAME/${VERSION}.*installed"); t
     update-secureboot-policy --new-key
     update-secureboot-policy --enroll-key
   elif [[ $(mokutil --sb-state 2>/dev/null) == *"enabled"* ]]; then # if Secure boot is enabled
-    if [[ $(mokutil --test-key "/root/mok.der" 2>/dev/null) != *"already enrolled"* ]]; then # if our keys are not already generated/enrolled by the MOK
+    if [[ $(mokutil --test-key "$SIGN_DIR/mok.der" 2>/dev/null) != *"already"* ]]; then # if our keys are not already generated/enrolled by the MOK
       generate_keys
     fi
   fi
