@@ -9,17 +9,23 @@ fi
 MODULE_NAME=acpi_ec
 SIGN_DIR=/root/module-signing
 
-modprobe -r $MODULE_NAME
+modprobe -rq $MODULE_NAME
 
 # Remove the module auto-loading
-rm /etc/modules-load.d/acpi_ec.conf
+rm -f /etc/modules-load.d/acpi_ec.conf
 
-mapfile -t VERSIONS < <(dkms status 2>/dev/null | sed -E -n "s/$MODULE_NAME, ([0-9]+.[0-9]+.[0-9]+).*/\1/ p" | sort -u)
+mapfile -t VERSIONS < <(dkms status 2>/dev/null | sed -E -n "s#$MODULE_NAME.*(v[0-9]+.[0-9]+.[0-9]+).*#\1# p" | sort -u)
+
+# FIX: v1.0.1 did not have a 'v' behind the version
+if $(dkms status | grep -q "$MODULE_NAME.*1.0.1"); then
+  VERSIONS+=( "1.0.1" )
+fi
 
 for version in "${VERSIONS[@]}"; do
-    dkms remove -m $MODULE_NAME -v "$version" --all
-    dkms uninstall -m $MODULE_NAME -v "$version"
+    dkms uninstall "$MODULE_NAME/$version" --all
+    dkms remove "$MODULE_NAME/$version" --all
     rm -rf "/usr/src/$MODULE_NAME-$version/"
+    echo "Uninstalled $MODULE_NAME $version"
 done
 
 if [[ -f "$SIGN_DIR/MOK.der" ]]; then
