@@ -46,6 +46,8 @@ if ! (dkms status 2>/dev/null | grep -q "$MODULE_NAME/${VERSION}.*installed"); t
     if [[ $(mokutil --test-key "$SIGN_DIR/mok.der" 2>/dev/null) != *"already"* ]]; then # if our keys are not already generated/enrolled by the MOK
       generate_keys
     fi
+  else
+    echo "WARNING: Secure Boot is not enabled!"
   fi
 
   if [[ ! -d "$MOD_SRC_DIR" ]]; then
@@ -63,6 +65,6 @@ if ! (dkms status 2>/dev/null | grep -q "$MODULE_NAME/${VERSION}.*installed"); t
   echo "acpi_ec" > /etc/modules-load.d/acpi_ec.conf
 
 else
-  echo "$MODULE_NAME v${VERSION} is already installed"
+  echo "$MODULE_NAME ${VERSION} is already installed"
   exit 1
 fi
