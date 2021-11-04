@@ -56,10 +56,10 @@ if ! (dkms status 2>/dev/null | grep -q "$MODULE_NAME/${VERSION}.*installed"); t
   fi
 
   cp dkms.conf "$MOD_SRC_DIR/dkms.conf"
-  sed -i "s/PACKAGE_VERSION=.*/PACKAGE_VERSION=\"${VERSION}\"/g" "$MOD_SRC_DIR/dkms.conf"
-  dkms add --force -m "$MODULE_NAME" -v "${VERSION}"
-  dkms build --force -m "$MODULE_NAME" -v "${VERSION}"
-  dkms install --force -m "$MODULE_NAME" -v "${VERSION}"
+  sed -i "s/PACKAGE_VERSION=.*/PACKAGE_VERSION=\"$VERSION\"/" "$MOD_SRC_DIR/dkms.conf"
+  dkms add -m "$MODULE_NAME" -v "$VERSION"
+  dkms build -m "$MODULE_NAME" -v "$VERSION"
+  dkms install -m "$MODULE_NAME" -v "$VERSION"
 
   # module auto-loading
   echo "acpi_ec" > /etc/modules-load.d/acpi_ec.conf
