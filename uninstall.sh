@@ -12,7 +12,7 @@ SIGN_DIR=/root/module-signing
 modprobe -r $MODULE_NAME
 
 # Remove the module auto-loading
-sed -i 's/acpi_ec//' /etc/modules-load.d/modules.conf
+rm /etc/modules-load.d/acpi_ec.conf
 
 mapfile -t VERSIONS < <(dkms status 2>/dev/null | sed -E -n "s/$MODULE_NAME, ([0-9]+.[0-9]+.[0-9]+).*/\1/ p" | sort -u)
 
