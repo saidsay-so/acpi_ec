@@ -112,7 +112,12 @@ static int acpi_ec_create_dev(void) {
     return err;
   }
 
-  if (IS_ERR(dev_class = class_create(THIS_MODULE, "chardev"))) {
+#if LINUX_VERSION_CODE < KERNEL_VERSION(6, 4, 0)
+  if (IS_ERR(dev_class = class_create(THIS_MODULE, "chardev")))
+#else
+  if (IS_ERR(dev_class = class_create("chardev")))
+#endif
+  {
     printk(KERN_ERR "acpi_ec: Failed to create a class\n");
     err = -1;
     goto error;
