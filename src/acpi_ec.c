@@ -20,6 +20,7 @@
 #include <linux/version.h>
 
 MODULE_AUTHOR("Thomas Renninger <trenn@suse.de>");
+MODULE_AUTHOR("Sayafdine Said <musikid@outlook.com>");
 MODULE_DESCRIPTION("ACPI EC access driver");
 MODULE_LICENSE("GPL");
 
