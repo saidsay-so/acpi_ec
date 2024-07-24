@@ -33,7 +33,7 @@ if ! command -v dkms >/dev/null 2>&1; then
   exit 1
 fi
 
-VERSION=$(git describe --tags --abbrev=0)
+VERSION="1.0.4"
 MOD_SRC_DIR="/usr/src/$MODULE_NAME-$VERSION"
 
 if ! (dkms status 2>/dev/null | grep -q "$MODULE_NAME/${VERSION}.*installed"); then # if the module is already installed in DKMS
