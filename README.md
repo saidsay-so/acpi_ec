@@ -14,7 +14,7 @@ The script can generate new keys and enroll them for Secure Boot.
 
 ## Debian
 
-You can find `.deb` in the [releases](https://github.com/MusiKid/acpi_ec/releases/latest).
+You can find `.deb` in the [releases](https://github.com/MusiKid/saidsay-so/releases/latest).
 
 ## Other distributions
 
